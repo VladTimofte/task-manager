@@ -1,23 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import TaskList from "./components/TaskList";
+import TaskForm from "./components/TaskForm";
+import "./App.css";
+import CategoryFilter from "./components/CategoryFilter";
 
 function App() {
+  const [tasks, setTasks] = useState([]);
+  const [filterCategory, setFilterCategory] = useState("All");
+
+  const addTask = (task) => {
+    setTasks([...tasks, { ...task, id: Date.now() }]);
+  };
+
+  const deleteTask = (taskId) => {
+    setTasks(tasks.filter((task) => task.id !== taskId));
+  };
+
+  const updateTask = (updatedTask) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === updatedTask.id ? updatedTask : task
+      )
+    );
+  };
+
+  const filteredTasks =
+    filterCategory === "All"
+      ? tasks
+      : tasks.filter((task) => task.category === filterCategory);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app-container">
+      <h1>Task Manager</h1>
+      <TaskForm addTask={addTask} />
+      <CategoryFilter setFilterCategory={setFilterCategory} />
+      <TaskList
+        tasks={filteredTasks}
+        deleteTask={deleteTask}
+        updateTask={updateTask}
+      />
     </div>
   );
 }
